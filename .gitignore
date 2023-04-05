@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Splitwise credentials
+src/main/resources/splitwise-credentials.env
+
+# Intellij Idea IDE conf
+.idea
