@@ -1,25 +1,25 @@
 import pandas as pd
-from splitwise import Splitwise, Expense
-from splitwise.group import Group
+
+from src.main.com.splitwise.ingestion.SplitwiseExtraction import SplitwiseExtractUtil
 
 
 class DataUtil:
-    __max_val = 1e1000
-
-    def __init__(self, conf: dict):
-        self.split_wise: Splitwise = Splitwise(consumer_key=conf.get("consumer_key"),
-                                               consumer_secret=conf.get("consumer_secret"),
-                                               api_key=conf.get("api_key"))
-
-    def get_groups(self) -> list[Group]:
-        return self.split_wise.getGroups()
-
-    def get_group(self, group_id: int) -> Group:
-        return self.split_wise.getGroup(group_id)
-
-    def get_expenses(self, group_id: int) -> list[Expense]:
-        return self.split_wise.getExpenses(group_id=group_id, limit=self.__max_val)
 
     @staticmethod
     def write_as_csv(df: pd.DataFrame, path: str, sep: str):
         df.to_csv(path, sep=sep, index=False)
+
+    @staticmethod
+    def extract_expenses(extraction_util: SplitwiseExtractUtil) -> pd.DataFrame:
+        expenses_list = map(lambda x: x.__dict__, extraction_util.get_expenses())
+        return pd.DataFrame(expenses_list)
+
+    @staticmethod
+    def preprocess_expenses(expenses: pd.DataFrame) -> pd.DataFrame:
+        expenses = expenses[["id", "description", "cost", "date"]].copy()
+        expenses['cost'] = pd.to_numeric(expenses['cost'], downcast='signed')
+        expenses['date'] = pd.to_datetime(expenses['date'], format='%Y-%m-%dT%H:%M:%SZ')
+        expenses['pk'] = expenses['date'].dt.strftime('%B, %Y')
+        expenses['month'] = expenses['date'].dt.strftime('%m')
+        expenses['year'] = expenses['date'].dt.strftime('%Y')
+        return expenses

@@ -3,3 +3,6 @@ splitwise==3.0.0
 python-dotenv==1.0.0
 PyYAML==6.0
 duckdb==0.8.1
+google-cloud==0.34.0
+google~=3.0.0
+importlib==1.0.4

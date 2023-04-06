@@ -2,33 +2,34 @@ import duckdb
 import pandas as pd
 
 from src.main.com.splitwise.util.DataUtil import DataUtil
+from src.main.com.splitwise.ingestion.SplitwiseExtraction import SplitwiseExtractUtil
+from src.main.com.splitwise.warehouse.BigQueryClient import BigQueryLoader
 
 
 class AnalyticsPipeline:
-    def __init__(self, conn: duckdb.DuckDBPyConnection, conf: dict, data_util: DataUtil):
-        self.conn = conn
-        self.conf = conf
-        self.data_util = data_util
-
-    def __extract_expenses(self) -> pd.DataFrame:
-        expenses_list = map(lambda x: x.__dict__, self.data_util.get_expenses(int(self.conf.get("GROUP_ID"))))
-        return pd.DataFrame(expenses_list)
-
-    def __preprocess_expenses(self, expenses: pd.DataFrame) -> pd.DataFrame:
-        expenses = expenses[["id", "description", "cost", "date"]]
-        expenses['cost'] = pd.to_numeric(expenses['cost'], downcast='signed')
-        expenses['date'] = pd.to_datetime(expenses['date'], format='%Y-%m-%dT%H:%M:%SZ')
-        expenses['month'] = expenses['date'].dt.strftime('%m/%Y')
-        return expenses
+    def __init__(self, db_connection: duckdb.DuckDBPyConnection,
+                 extraction_util: SplitwiseExtractUtil,
+                 bq_loader: BigQueryLoader):
+        self.conn = db_connection
+        self.extraction_util = extraction_util
+        self.loader = bq_loader
 
     def execute(self, query_dict: dict):
-        expenses = self.__extract_expenses()
-        expenses = self.__preprocess_expenses(expenses)
-        self.conn.register("expenses", expenses)
+        self.conn.query("install httpfs; load httpfs;")
+        # Extract & Pre-process
+        expenses = DataUtil.extract_expenses(extraction_util=self.extraction_util)
+        expenses = DataUtil.preprocess_expenses(expenses=expenses)
+        # Transform
+        result = self._transform(expenses, query_dict)
+        # Load
+        return self.loader.load_df_to_bq(result)
+
+    def _transform(self, df: pd.DataFrame, query_dict: dict) -> pd.DataFrame:
+        self.conn.register("expenses", df)
         self.conn.query(query_dict['instamart']).to_view("instamart")
         self.conn.query(query_dict['swiggy']).to_view("swiggy")
         self.conn.query(query_dict['supermarket']).to_view("supermarket")
         self.conn.query(query_dict['bigbasket']).to_view("bigbasket")
-        self.conn.query(query_dict['aggregation']).to_view("aggregation")
-        self.conn.query(query_dict['pivot']).show()
-        a = 0
+        result = self.conn.query(query_dict['result'])
+        result.show()
+        return result.df()
