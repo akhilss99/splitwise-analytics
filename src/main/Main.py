@@ -3,10 +3,11 @@ from com.splitwise.util.DataUtil import DataUtil
 from com.splitwise.util.ConfigUtil import ConfigUtil
 
 if __name__ == '__main__':
-    path = "D:\Projects\splitwise-analytics\src\main\\resources\splitwise-credentials.env"
 
-    conf = ConfigUtil.get_conf(path)
+    conf = ConfigUtil.get_conf("splitwise-credentials.env")
     data_util = DataUtil(conf)
 
+    queries = ConfigUtil.get_queries("queries.yaml")
+
     pipeline = AnalyticsPipeline(conf, data_util)
-    pipeline.execute()
+    pipeline.execute(query_dict=queries)
