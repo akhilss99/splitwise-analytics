@@ -1,30 +1,50 @@
 instamart: >-
-  select id, description, cost, date, month, 'instamart' as purchase
-  from expenses
-  where description ilike '%instamart%'
+  select *, 'instamart' as purchase 
+  from
+     expenses 
+  where
+     description ilike '%instamart%'
 swiggy: >-
-  select id, description, cost, date, month, 'swiggy' as purchase
-  from expenses
-  where description not ilike '%instamart%' and description ilike '%swiggy%'
+  select *, 'swiggy' as purchase 
+  from
+     expenses 
+  where
+     description not ilike '%instamart%' 
+     and description ilike '%swiggy%'
 supermarket: >-
-  select id, description, cost, date, month, 'supermarket' as purchase
-  from expenses
-  where description ilike '%supermarket%'
+  select *, 'supermarket' as purchase
+  from 
+     expenses
+  where 
+     description ilike '%supermarket%'
 bigbasket: >-
-  select id, description, cost, date, month, 'bigbasket' as purchase
-  from expenses
-  where description ilike '%big%' and description ilike '%basket%'
-aggregation: >-
-  with expense_data as (select * from instamart
-  union all
-  select * from swiggy
-  union all
-  select * from supermarket
-  union all
-  select * from bigbasket)
-
-  select DISTINCT purchase, month, sum(cast(cost as float)) over(partition by month, purchase) as cost 
-  from expense_data
-  order by month, purchase;
-pivot: >-
-  PIVOT aggregation on purchase using sum(cost);
+  select *, 'bigbasket' as purchase
+  from 
+     expenses
+  where 
+     description ilike '%big%' 
+     and description ilike '%basket%'
+result: >-
+  with cumulative_expense as (
+    select * from instamart
+    union all
+    select * from swiggy
+    union all
+    select * from supermarket
+    union all
+    select * from bigbasket
+  ),
+  monthly_partitioned_expense as (
+    select DISTINCT
+       purchase,
+       pk,
+       sum(cost) over(partition by pk, purchase) as cost 
+    from
+       cumulative_expense 
+    order by
+       year desc,
+       month,
+       purchase
+  )
+  
+  PIVOT monthly_partitioned_expense on purchase using sum(cost);
