@@ -6,3 +6,5 @@ duckdb==0.8.1
 google-cloud==0.34.0
 google~=3.0.0
 importlib==1.0.4
+functions-framework==3.4.0
+google-cloud-logging==3.6.0
