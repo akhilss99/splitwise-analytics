@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+  dbt-proc:
+    image: dbt_splitwise
+    container_name: dbt-proc
+    build:
+      context: transform/.
+      dockerfile: Dockerfile
+    volumes:
+      - shared_volume:/home/splitwise-analytics/transform/persistence:nocopy
+    environment:
+      - S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
+      - S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}
+
+  metaduck:
+    image: metaduck_splitwise
+    container_name: metaduck-visualize
+    build:
+      context: metaduck/.
+      dockerfile: Dockerfile
+    ports:
+      - "5432:3000"
+    volumes:
+      - shared_volume:/home/splitwise-analytics/transform/persistence:nocopy
+      - metabase_volume:/home/splitwise-analytics/metaduck
+    healthcheck:
+      test: curl --fail -I http://localhost:3000/api/health || exit 1
+      interval: 15s
+      timeout: 5s
+      retries: 2
+    # environment:
+    #   - MB_DB_TYPE=duckdb
+    #   - MB_DB_DBNAME=analyticsdb
+    #   - MB_DB_USER=admin
+    #   - MB_DB_PASS=admin1234
+    #   - MB_DB_FILE=/home/splitwise-analytics/transform/persistence/analyticsdb.db
+    #   - MB_PLUGINS_DIR=/home/splitwise-analytics/metaduck/plugins/
+    depends_on:
+      - dbt-proc
+
+volumes:
+  shared_volume:
+  metabase_volume:
