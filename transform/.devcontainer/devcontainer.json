@@ -1,12 +1,9 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
-	"name": "dbt-proc",
-	"service": "dbt-proc",
+	"name": "",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"dockerComposeFile":"../../docker-compose.yml",
-	"workspaceFolder": "/home/splitwise-analytics/transform",
-	"postCreateCommand": "pip install -r .devcontainer/devrequirements.txt",
+	"image": "mcr.microsoft.com/devcontainers/python:0-3.11",
 	"features": {
 		"ghcr.io/devcontainers/features/git:1": {},
 		"ghcr.io/devcontainers/features/github-cli:1": {},
@@ -20,9 +17,9 @@
 			"innoverio.vscode-dbt-power-user",
 			"Microsoft.Docker",
 			"Microsoft.Python"
-		  ]
+		]
 		}
-	  }
+	  },
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
@@ -36,5 +33,7 @@
 	// "customizations": {},
 	// pip install dbt-duckdb
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	//"remoteUser": "dev"
+	"remoteUser": "root",
+	"postCreateCommand": "pip install -r requirements.txt",
+	"runArgs": ["--env-file","../.env"]
 }
