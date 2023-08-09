@@ -33,11 +33,14 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   splitwise_transformations:
     staging:
+      +schema: staging
       +materialized: view
     intermediate:
+      +schema: intermediate
       +materialized: table
       purchases:
         +materialized: view
     marts:
+      +schema: marts
       purchase:
         +materialized: table

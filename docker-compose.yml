@@ -14,11 +14,8 @@ services:
       - S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}
 
   metaduck:
-    image: metaduck_splitwise
+    image: akdocker61/metaduck-splitwise:latest
     container_name: metaduck-visualize
-    build:
-      context: metaduck/.
-      dockerfile: Dockerfile
     ports:
       - "5432:3000"
     volumes:

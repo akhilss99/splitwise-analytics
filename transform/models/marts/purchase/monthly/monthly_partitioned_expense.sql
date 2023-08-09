@@ -7,7 +7,9 @@ with monthly_partitioned_expense as (
    from
       {{ ref('fact_purchases') }}
    where
-      group_name = 'Flat 105' 
+      group_name = 'Flat 105'
+      and
+      purchase not null
    group by
       month,
       year,

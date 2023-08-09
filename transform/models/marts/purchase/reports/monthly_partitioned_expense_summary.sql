@@ -8,12 +8,20 @@ monthly_partitioned_expense_summary as (
     select 
         month,
         year,
-        bigbasket,
-        supermarket,
-        swiggy,
-        (bigbasket + instamart + supermarket + swiggy) as total
+        coalesce(bigbasket, 0) as bigbasket,
+        coalesce(supermarket, 0) as supermarket,
+        coalesce(swiggy, 0) as swiggy,
+        coalesce(instamart, 0) as instamart
     from
         purchase_summary
+),
+
+final as (
+    select
+        *,
+        bigbasket + instamart + supermarket + swiggy as total
+    from
+        monthly_partitioned_expense_summary
 )
 
-select * from monthly_partitioned_expense_summary
+select * from final

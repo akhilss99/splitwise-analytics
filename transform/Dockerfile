@@ -11,4 +11,4 @@ RUN pip install \
          --no-cache-dir \
          -r requirements.txt
 
-CMD dbt build --profiles-dir . && sleep infinity
+CMD dbt build && sleep infinity
