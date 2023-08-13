@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: fact_group_expenditures
+    description: >
+      "Joined table between [expense](/#!/model/model.splitwise_transformations.expense)
+       and [groups](/#!/model/model.splitwise_transformations.groups) based on group_id"
+    columns:
+      - name: group_name
+        description: "The name of the group to which the expense exists"
+
+      - name: description
+        description: "The description of the expense"
+
+      - name: cost
+        description: "The cost of the expense"
+
+      - name: date
+        description: "The date in which the expense is logged"
+
+      - name: year
+        description: "The year in which the expense is logged"
+
+      - name: month
+        description: "The month in which the expense is logged"
+
+      - name: category
+        description: "The category to which the expense belongs to"
+
+  - name: purchases
+    description: "Table depicting information on the type of purchase for a logged expense"
+    columns:
+      - name: month
+        description: "The month in which the expense is logged"
+
+      - name: year
+        description: "The year in which the expense is logged"
+
+      - name: group_name
+        description: "The name of the group to which the expense exists"
+
+      - name: description
+        description: "The description of the expense"
+
+      - name: cost
+        description: "The cost of the expense"
+
+      - name: date
+        description: "The date in which the expense is logged"
+
+      - name: category
+        description: "The category to which the expense belongs to"
+
+      - name: purchase
+        description: "The type of purchase that has happened"

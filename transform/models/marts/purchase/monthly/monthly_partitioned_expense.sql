@@ -2,18 +2,21 @@ with monthly_partitioned_expense as (
    select
       month,
       year,
-      purchase,
+      purchase_type,
       sum(cost) as total_spent
    from
-      {{ ref('fact_purchases') }}
+      {{ ref('purchases') }}
    where
-      group_name = 'Flat 105'
-      and
-      purchase not null
+      group_name in ({% for group in var('groups') %}'{{ group }}'{% endfor %})
    group by
       month,
       year,
-      purchase
+      purchase_type
+),
+purchase_summary as (
+   PIVOT 
+      monthly_partitioned_expense on purchase_type
+   using sum(total_spent)
 )
 
-select * from monthly_partitioned_expense
+select * from purchase_summary

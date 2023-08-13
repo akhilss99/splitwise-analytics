@@ -1,25 +1,24 @@
-with purchase_summary as (
-    PIVOT 
-        {{ ref('monthly_partitioned_expense') }} on purchase
-    using sum(total_spent)
-),
+{% set column_names = dbt_utils.get_filtered_columns_in_relation(from=ref('monthly_partitioned_expense'), except=["month", "year"]) %}
 
-monthly_partitioned_expense_summary as (
+with monthly_partitioned_expense_summary as (
     select 
         month,
         year,
-        coalesce(bigbasket, 0) as bigbasket,
-        coalesce(supermarket, 0) as supermarket,
-        coalesce(swiggy, 0) as swiggy,
-        coalesce(instamart, 0) as instamart
+        {% for column_name in column_names %}
+            coalesce({{ column_name }}, 0) as {{ column_name }},
+        {% endfor %}
     from
-        purchase_summary
+        {{ ref('monthly_partitioned_expense') }}
 ),
 
 final as (
     select
-        *,
-        bigbasket + instamart + supermarket + swiggy as total
+        month,
+        year,
+        {% for column_name in column_names %}
+            {{ column_name }},
+        {% endfor %}
+        {{ column_names | join(' + ') }} as total
     from
         monthly_partitioned_expense_summary
 )

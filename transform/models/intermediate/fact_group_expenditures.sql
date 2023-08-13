@@ -1,6 +1,5 @@
 with group_expenditures as (
     select
-        g.id as group_id,
         g.name as group_name,
         e.description as description,
         e.payment as payment,
@@ -8,12 +7,10 @@ with group_expenditures as (
         e.date as date,
         e.year as year,
         e.month as month,
-        e.created_at as created_at,
-        e.created_by as created_by,
         e.category as category
     from
-        {{ ref('stg_expense') }} e
-        inner join {{ ref('stg_groups') }} g on e.group_id = g.id
+        {{ ref('expense') }} e
+        inner join {{ ref('groups') }} g on e.group_id = g.id
         where e.active_ind = 1
 )
 
