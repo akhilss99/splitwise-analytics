@@ -2,11 +2,8 @@ version: '3.9'
 
 services:
   dbt-proc:
-    image: dbt_splitwise
+    image: akdocker61/dbt_splitwise:latest
     container_name: dbt-proc
-    build:
-      context: transform/.
-      dockerfile: Dockerfile
     volumes:
       - shared_volume:/home/splitwise-analytics/transform/persistence:nocopy
     environment:
