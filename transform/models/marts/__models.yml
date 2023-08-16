@@ -6,36 +6,81 @@ models:
     columns:
       - name: month
         description: "Month of the expense"
+        tests:
+          - accepted_values:
+              values:
+                [
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July",
+                  "August",
+                  "September",
+                  "October",
+                  "November",
+                  "December",
+                ]
 
       - name: year
         description: "Year of the expense"
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "\\d{4}"
 
       - name: purchase_type
         description: "Purchase Type of the expense"
 
-      - name: total_spent
-        description: "Total spent on the expense"
-
   - name: monthly_partitioned_expense_summary
     description: "Pivoted table on different purchase_type on monthly basis"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - month
+            - year
     columns:
       - name: month
         description: "Month of the expense"
+        tests:
+          - accepted_values:
+              values:
+                [
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July",
+                  "August",
+                  "September",
+                  "October",
+                  "November",
+                  "December",
+                ]
 
       - name: year
         description: "Year of the expense"
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "\\d{4}"
 
       - name: bigbasket
-        description: ""
+        description: "BigBasket purchase type"
 
       - name: supermarket
-        description: ""
+        description: "Super Market purchase type"
 
       - name: swiggy
-        description: ""
+        description: "Swiggy purchase type"
 
       - name: instamart
-        description: ""
+        description: "Instamart purchase type"
 
       - name: total
         description: "Total spent on the purchase_type for a given month, year"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"

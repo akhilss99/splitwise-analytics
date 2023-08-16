@@ -1,0 +1,162 @@
+version: 2
+
+models:
+  - name: expense
+    description: "Expense table which stores the expense logged by the user."
+    columns:
+      - name: id
+        description: "Primary Key of the expense table."
+        tests:
+          - unique
+          - not_null
+
+      - name: group_id
+        description: "Foreign Key referencing the Group table."
+        tests:
+          - relationships:
+              to: ref('groups')
+              field: id
+
+      - name: description
+        description: "Description of the Expense logged."
+
+      - name: payment
+        description: "Is payment done"
+        tests:
+          - accepted_values:
+              values: ["true", "false"]
+              quote: false
+
+      - name: creation_method
+        description: "Creation method"
+
+      - name: transaction_method
+        description: "Transaction method"
+
+      - name: transaction_confirmed
+        description: "Is Transaction confirmed or not"
+        tests:
+          - accepted_values:
+              values: ["true", "false"]
+              quote: false
+
+      - name: cost
+        description: "Amount of the expense"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+
+      - name: currency_code
+        description: "Currency code of the expense"
+
+      - name: date
+        description: "Date of the expense"
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}"
+
+      - name: month
+        description: "Month (in words) of the expense"
+        tests:
+          - accepted_values:
+              values:
+                [
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July",
+                  "August",
+                  "September",
+                  "October",
+                  "November",
+                  "December",
+                ]
+
+      - name: year
+        description: "Year of the expense"
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "\\d{4}"
+
+      - name: created_at
+        description: "The date of the expense created"
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z"
+
+      - name: updated_at
+        description: "The last updated time of the expense"
+
+      - name: deleted_at
+        description: "The date at which the expense has been deleted"
+
+      - name: transaction_id
+        description: "Transaction id of the expense"
+
+      - name: created_by
+        description: "User who created the expense"
+        tests:
+          - not_null
+
+      - name: category
+        description: "Category of the expense"
+
+      - name: updated_by
+        description: "User who updated the expense"
+
+      - name: deleted_by
+        description: "User who deleted the expense"
+
+      - name: active_ind
+        description: "Indicating whether the expense is active (deleted) or not"
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - 0
+                - 1
+
+  - name: friends
+    description: "Friends table which stores all the friends who are associated with the user"
+    columns:
+      - name: id
+        description: "Primary Key of Friends table"
+        tests:
+          - unique
+          - not_null
+
+      - name: first_name
+        description: "First Name of the friend"
+
+      - name: last_name
+        description: "Last Name of the friend"
+
+      - name: email
+        description: "Email address of the friend"
+
+  - name: groups
+    description: "Groups table which the user is a member of."
+    columns:
+      - name: id
+        description: "Primary Key of Group table"
+        tests:
+          - unique
+          - not_null
+
+      - name: name
+        description: "Name of the group"
+
+      - name: updated_at
+        description: "Last updated date-time of the group"
+
+      - name: created_at
+        description: "The date at which the group was created"
+        tests:
+          - not_null
+
+      - name: group_type
+        description: "The type of group"

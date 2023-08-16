@@ -1,0 +1,12 @@
+version: 2
+
+macros:
+  - name: generate_purchase_types
+    description: Generate CASE WHEN statement by comparing the field from the purchase types given. 
+    arguments:
+      - name: field
+        type: string
+        description: The name of the column to be compared
+      - name: types
+        type: object
+        description: The different purchase types which're to be added

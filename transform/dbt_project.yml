@@ -29,6 +29,8 @@ vars:
       bigbasket:
         match: [".*big.*", ".*basket.*"]
 
+  "dbt_date:time_zone": "Asia/Kolkata"
+
 models:
   splitwise_transformations:
     staging:
