@@ -15,7 +15,7 @@ jobs:
 
       - name: Set up dbt
         run: |
-          pip install dbt-core
+          pip install dbt-duckdb
           dbt --version
         working-directory: ./transform
 
