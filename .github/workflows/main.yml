@@ -14,9 +14,10 @@ jobs:
         run: |
           pip install dbt-core
           dbt --version
+          cd transform/
 
       - name: Generate dbt Docs
-        run: dbt docs generate --project-dir /transform/ --profiles-dir /transform/
+        run: dbt docs generate
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
