@@ -1,0 +1,25 @@
+on:
+  pull_request:
+    branches:
+    - WIP
+  workflow_dispatch:
+jobs:
+  DBT-DOC-JOB:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up dbt
+        run: |
+          pip install dbt
+          dbt --version
+
+      - name: Generate dbt Docs
+        run: dbt docs generate
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: transform/target # Change this to the directory where your dbt docs are generated
