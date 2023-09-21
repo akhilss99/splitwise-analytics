@@ -14,7 +14,9 @@ jobs:
         run: |
           pip install dbt-core
           dbt --version
-          cd transform/
+          
+      - name: Change Directory
+        run: cd transform/
 
       - name: Generate dbt Docs
         run: dbt docs generate
