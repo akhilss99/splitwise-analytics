@@ -12,7 +12,7 @@ jobs:
 
       - name: Set up dbt
         run: |
-          pip install dbt
+          pip install dbt-core
           dbt --version
 
       - name: Generate dbt Docs
