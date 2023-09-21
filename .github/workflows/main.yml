@@ -16,7 +16,7 @@ jobs:
           dbt --version
 
       - name: Generate dbt Docs
-        run: dbt docs generate
+        run: dbt docs generate --project-dir /transform/ --profiles-dir /transform/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
