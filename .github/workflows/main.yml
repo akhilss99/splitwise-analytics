@@ -17,6 +17,7 @@ jobs:
         run: |
           pip install dbt-duckdb
           dbt --version
+          dbt deps
         working-directory: ./transform
 
       - name: Generate dbt Docs
