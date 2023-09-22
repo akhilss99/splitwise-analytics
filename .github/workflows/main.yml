@@ -13,6 +13,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: DuckDB dir
+        run: mkdir persistence
+        working-directory: ./transform
+
       - name: Set up dbt
         run: |
           pip install dbt-duckdb
