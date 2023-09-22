@@ -1,3 +1,5 @@
+name: DBT-DOC-ACTION
+run-name: Action to deploy dbt docs
 on:
   pull_request:
     branches:
@@ -5,12 +7,13 @@ on:
   workflow_dispatch:
 jobs:
   DBT-DOC-JOB:
-    permissions: 
-      pages: write
     env:
         S3_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
         S3_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_ACCESS_KEY }}
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      contents: write 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
